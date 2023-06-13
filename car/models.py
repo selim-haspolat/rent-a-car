@@ -36,7 +36,7 @@ class Car(FixModel):
         decimal_places=2,
         validators=[MinValueValidator(1)],
     )
-    availabilty = models.BooleanField(default=True)
+    availability = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.brand} {self.model} {self.plate}'
@@ -47,8 +47,15 @@ class Car(FixModel):
 # -----------------------------------------
 class Reservation(FixModel):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    started_date = models.DateField()
+    start_date = models.DateField()
     end_date = models.DateField()
-
+    
     def __str__(self):
-        return f"Customer {self.user} reserved {self.car} - {self.start_date} - {self.end_date}"
+        return f"[{self.user}] - {self.car} - {self.start_date} - {self.end_date}"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'start_date', 'end_date'], name='user_rent_date'
+            )
+        ]
